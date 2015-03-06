@@ -186,7 +186,7 @@ namespace PolynomialTask1
             else if (lenOther >= 0) return 1;
             else return 0;
         }
-
+        /*
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
@@ -197,6 +197,23 @@ namespace PolynomialTask1
                 sb.AppendFormat("x^{0}+", power[i]);
             }
             sb.Remove(sb.Length - 1, 1);
+            return sb.ToString();
+        }*/
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+
+            for (int i = length - 1; i >= 0; i--)
+            {
+                sb.AppendFormat("{0:0.00}", coefficient[i]);
+                if (power[i] != 0)
+                {
+                    sb.Append("x");
+                    if (power[i]!=1) sb.AppendFormat("^{0}", power[i]);
+                }
+                if ((i > 0) && (coefficient[i - 1] > 0)) sb.Append("+");
+            }
             return sb.ToString();
         }
 

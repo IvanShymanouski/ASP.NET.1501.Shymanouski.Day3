@@ -22,7 +22,7 @@ namespace PolynomialTask1.Tests
                 };
             Polynomial o1 = new Polynomial(a1);
 
-            Assert.AreEqual(o1.ToString(), "4,60x^2+213,70x^8+2,80x^9","ctor fail");
+            Assert.AreEqual(o1.ToString(), "2,80x^9+213,70x^8+4,60x^2", "ctor fail");
 
             Monomial[] aa1 =
             {
@@ -74,6 +74,34 @@ namespace PolynomialTask1.Tests
 
             p0 += p1;
             Assert.AreEqual(p1, p0, "null error 2");
+        }
+
+        [TestMethod]
+        public void DividerAndModTest()
+        {
+            Monomial[] a1 =
+            {
+                new Monomial {power = 6, coefficient = 2},
+                new Monomial {power = 5, coefficient = -1},
+                new Monomial {power = 3, coefficient = 12},
+                new Monomial {power = 2, coefficient = -72},
+                new Monomial {power = 0, coefficient = 3}
+            };
+            Polynomial o1 = new Polynomial(a1);
+
+            Monomial[] a2 =
+            {
+                new Monomial {power = 3, coefficient = 1},
+                new Monomial {power = 2, coefficient = 2},
+                new Monomial {power = 0, coefficient = -1}
+            };
+            Polynomial o2 = new Polynomial(a2);
+
+            Polynomial o3 = o1 / o2;
+            Assert.AreEqual(o3.ToString(), "2,00x^3-5,00x^2+10,00x-6,00", "Divide problem");
+
+            Polynomial o4 = o1 % o2;
+            Assert.AreEqual(o4.ToString(),"-65,00x^2+10,00x-3,00","Mod problem");
         }
     }
 }
