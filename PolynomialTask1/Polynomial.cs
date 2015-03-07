@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Globalization;
 
 namespace PolynomialTask1
 {
@@ -12,8 +14,7 @@ namespace PolynomialTask1
         public double coefficient;
     }
 
-
-    public class Polynomial: IComparable<Polynomial>,ICloneable
+    public class Polynomial : IComparable<Polynomial>, ICloneable, IEquatable<Polynomial>
     {
         #region Monomial
         int[] power;
@@ -35,7 +36,8 @@ namespace PolynomialTask1
             length = 0;
         }
 
-        public Polynomial(params Monomial[] param):this(param.Length)
+        public Polynomial(params Monomial[] param)
+            : this(param.Length)
         {
             for (int i = 0; i < param.Length; i++)
             {
@@ -60,10 +62,22 @@ namespace PolynomialTask1
             }
             else Initialize(16);
         }
+
+        public Polynomial(string param)
+        {
+            if (!string.IsNullOrEmpty(param))
+            {
+                Initialize(16);
+                GetPolynomialFromString(this, param);
+                Normalization(this);
+            }
+            else Initialize(16);
+        }
         #endregion
 
         #region operators
-        public static Polynomial operator +(Polynomial a,Polynomial b)
+        #region polinomial polinomial
+        public static Polynomial operator +(Polynomial a, Polynomial b)
         {
             if (a == null) return b;
             else if (b == null) return a;
@@ -83,7 +97,7 @@ namespace PolynomialTask1
             else if (b == null) return a;
 
             Polynomial result = GetProduct(a, b.power[0], b.coefficient[0]);
-            Polynomial temp; 
+            Polynomial temp;
 
             for (int i = 1; i < b.length; i++)
             {
@@ -114,55 +128,166 @@ namespace PolynomialTask1
         }
         #endregion
 
+        #region string polinomial
+        public static Polynomial operator +(string str, Polynomial b)
+        {
+            Polynomial a = new Polynomial();
+            GetPolynomialFromString(a, str);
+            return a+b;
+        }
+
+        public static Polynomial operator -(string str, Polynomial b)
+        {
+            Polynomial a = new Polynomial();
+            GetPolynomialFromString(a, str);
+            return a - b;
+        }
+
+        public static Polynomial operator *(string str, Polynomial b)
+        {
+            Polynomial a = new Polynomial();
+            GetPolynomialFromString(a, str);
+            return a * b;
+        }
+
+        public static Polynomial operator /(string str, Polynomial b)
+        {
+            Polynomial a = new Polynomial();
+            GetPolynomialFromString(a, str);
+            return a / b;
+        }
+
+        public static Polynomial operator %(string str, Polynomial b)
+        {
+            Polynomial a = new Polynomial();
+            GetPolynomialFromString(a, str);
+            return a % b;
+        }
+        #endregion
+
+        #region polinomial string
+        public static Polynomial operator +(Polynomial a, string str)
+        {
+            Polynomial b = new Polynomial();
+            GetPolynomialFromString(b, str);
+            return a + b;
+        }
+
+        public static Polynomial operator -(Polynomial a, string str)
+        {
+            Polynomial b = new Polynomial();
+            GetPolynomialFromString(b, str);
+            return a - b;
+        }
+
+        public static Polynomial operator *(Polynomial a, string str)
+        {
+            Polynomial b = new Polynomial();
+            GetPolynomialFromString(b, str);
+            return a * b;
+        }
+
+        public static Polynomial operator /(Polynomial a, string str)
+        {
+            Polynomial b = new Polynomial();
+            GetPolynomialFromString(b, str);
+            return a / b;
+        }
+
+        public static Polynomial operator %(Polynomial a, string str)
+        {
+            Polynomial b = new Polynomial();
+            GetPolynomialFromString(b, str);
+            return a % b;
+        }
+        #endregion
+        #endregion
+
         #region alternative for operators
+        #region polinomial polinomial
         public static Polynomial Add(Polynomial a, Polynomial b)
         {
-            if (a == null) return b;
-            else if (b == null) return a;
-            return Normalization(PolynomialMerge(a, b, +1));
+            return a + b;
         }
 
         public static Polynomial Subtract(Polynomial a, Polynomial b)
         {
-            if (a == null) return b;
-            else if (b == null) return a;
-            return Normalization(PolynomialMerge(a, b, -1));
+            return a - b;
         }
 
         public static Polynomial Multiply(Polynomial a, Polynomial b)
         {
-            if (a == null) return b;
-            else if (b == null) return a;
-            Polynomial result = GetProduct(a, b.power[0], b.coefficient[0]);
-            Polynomial temp;
-
-            for (int i = 1; i < b.length; i++)
-            {
-                temp = GetProduct(a, b.power[i], b.coefficient[i]);
-                result = PolynomialMerge(result, temp, +1);
-            }
-
-            return Normalization(result);
+            return a * b;
         }
 
         public static Polynomial Divide(Polynomial a, Polynomial b)
         {
-            if (a == null) return b;
-            else if (b == null) return a;
-            Polynomial rem;
-            return Normalization(GetDevideResult(a, b, out rem));
+            return a / b;
         }
 
         public static Polynomial Mod(Polynomial a, Polynomial b)
         {
-            if (a == null) return b;
-            else if (b == null) return a;
-            Polynomial rem;
-            GetDevideResult(a, b, out rem);
-            return Normalization(rem);
+            return a % b;
         }
         #endregion
 
+        #region string polinomial
+        public static Polynomial Add(string a, Polynomial b)
+        {
+            return a + b;
+        }
+
+        public static Polynomial Subtract(string a, Polynomial b)
+        {
+            return a - b;
+        }
+
+        public static Polynomial Multiply(string a, Polynomial b)
+        {
+            return a * b;
+        }
+
+        public static Polynomial Divide(string a, Polynomial b)
+        {
+            return a / b;
+        }
+
+        public static Polynomial Mod(string a, Polynomial b)
+        {
+            return a % b;
+        }
+        #endregion
+
+        #region polinomial string
+        public static Polynomial Add(Polynomial a, string b)
+        {
+            return a + b;
+        }
+
+        public static Polynomial Subtract(Polynomial a, string b)
+        {
+            return a - b;
+        }
+
+        public static Polynomial Multiply(Polynomial a, string b)
+        {
+            return a * b;
+        }
+
+        public static Polynomial Divide(Polynomial a, string b)
+        {
+            return a / b;
+        }
+
+        public static Polynomial Mod(Polynomial a, string b)
+        {
+            return a % b;
+        }
+        #endregion
+
+        #endregion
+
+        #region interface realisation
         public object Clone()
         {
             return new Polynomial(this);
@@ -186,36 +311,47 @@ namespace PolynomialTask1
             else if (lenOther >= 0) return 1;
             else return 0;
         }
-        /*
-        public override string ToString()
+
+        public bool Equals(Polynomial other)
         {
-            StringBuilder sb = new StringBuilder();
+            return this.ToString() == other.ToString();
+        }
+        #endregion
 
-            for (int i = 0; i < length; i++)
-            {
-                sb.AppendFormat("{0:0.00}",coefficient[i]);
-                sb.AppendFormat("x^{0}+", power[i]);
-            }
-            sb.Remove(sb.Length - 1, 1);
-            return sb.ToString();
-        }*/
-
+        #region overrides
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
 
             for (int i = length - 1; i >= 0; i--)
             {
-                sb.AppendFormat("{0:0.00}", coefficient[i]);
+                if ((power[i] == 0) || (power[i] != 0 && coefficient[i] != 1))
+                {
+                    sb.AppendFormat("{0:0.00}", coefficient[i]);
+                }
                 if (power[i] != 0)
                 {
                     sb.Append("x");
-                    if (power[i]!=1) sb.AppendFormat("^{0}", power[i]);
+                    if (power[i] != 1) sb.AppendFormat("^{0}", power[i]);
                 }
-                if ((i > 0) && (coefficient[i - 1] > 0)) sb.Append("+");
+                if ((i > 0) && (coefficient[i - 1] >= 0)) sb.Append("+");
             }
-            return sb.ToString();
+            string str;
+            if ((str = sb.ToString()) == "") str = "0";
+            return str;
         }
+
+        public override bool Equals(object other)
+        {
+            if (!(other is Polynomial)) return false;
+            return Equals((Polynomial)other);
+        }
+
+        public override int GetHashCode()
+        {
+            return this.ToString().GetHashCode();
+        }
+        #endregion
 
         //removes zero coefficient monomials
         private static Polynomial Normalization(Polynomial a)
@@ -261,11 +397,11 @@ namespace PolynomialTask1
 
         private static Polynomial GetDevideResult(Polynomial a, Polynomial b, out Polynomial remainder)
         {
-            int lastA=a.length-1, lastB=b.length-1;
+            int lastA = a.length - 1, lastB = b.length - 1;
             int countOfIteration = (a.power[lastA] - a.power[0]) - (b.power[lastB] - b.power[0]) + 1;
 
             Polynomial temp;
-            Polynomial result=new Polynomial(countOfIteration);
+            Polynomial result = new Polynomial(countOfIteration);
 
             remainder = a;
 
@@ -279,7 +415,7 @@ namespace PolynomialTask1
                     InsertMonomial(result, powerMul, coefficientMul);
                     temp = GetProduct(b, powerMul, coefficientMul);
                     remainder = Normalization(PolynomialMerge(remainder, temp, -1));
-                    lastA = remainder.length-1;
+                    lastA = remainder.length - 1;
                 }
             }
             else
@@ -371,6 +507,68 @@ namespace PolynomialTask1
             a.length++;
             a.power = tempPower;
             a.coefficient = tempCoefficient;
+        }
+
+        private static void GetPolynomialFromString(Polynomial a, string polinom)
+        {
+            int power = 0; double coefficient = 0;
+            while (GetMonomialFromString(ref polinom, ref power, ref coefficient))
+            {
+                InsertMonomial(a, power, coefficient);
+            }
+        }
+
+        private static bool GetMonomialFromString(ref string polinom, ref int power, ref double coefficient)
+        {
+            power = 0;
+            coefficient = 1;
+
+            Regex regular = new Regex(@"-?[0-9]+([.,][0-9]+)?");
+            Match teg = regular.Match(polinom);
+            string str = teg.ToString();
+            int countIndex = polinom.IndexOf(str);
+            int xIndex = polinom.IndexOf('x');
+            if (((xIndex < 0) || (xIndex > countIndex)) && (teg.Success))
+            {
+                coefficient = double.Parse(str.Replace(',', '.'), CultureInfo.InvariantCulture);
+                polinom = polinom.Remove(0, countIndex + teg.ToString().Length);
+            }
+            else
+                if (xIndex > 0)
+                {
+                    polinom = polinom.Remove(0, xIndex);
+                }
+            if (string.IsNullOrEmpty(polinom))
+            {
+                if (teg.Success) return true;
+                else return false;
+            }
+
+            if (polinom[0] == 'x')
+            {
+                if ((polinom.Length>1)&&(polinom[1] == '^'))
+                {
+                    regular = new Regex(@"-?[0-9]+");
+                    teg = regular.Match(polinom);
+                    if (int.TryParse(teg.ToString(), out power))
+                    {
+                        polinom = polinom.Remove(polinom.IndexOf(teg.ToString()) - 2, teg.ToString().Length + 2);
+                    }
+                    else
+                    {
+                        power = 1;
+                        polinom = polinom.Remove(0, 2);
+                    }
+                }
+                else
+                {
+                    power = 1;
+                    polinom = polinom.Remove(0, 1);
+                }
+            }
+
+
+            return true;
         }
     }
 }

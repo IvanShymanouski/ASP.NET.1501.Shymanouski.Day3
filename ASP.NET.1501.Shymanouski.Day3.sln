@@ -5,6 +5,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PolynomialTask1", "Polynomi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PolynomialTask1.Tests", "PolynomialTask1.Tests\PolynomialTask1.Tests.csproj", "{FABB278A-F867-4138-9111-5F8FE355F1A1}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Отличие ссылочного типа от значимого", "Отличие ссылочного типа от значимого", "{F940BA43-6AC2-4BCF-9E8A-E69356F184FA}"
+	ProjectSection(SolutionItems) = preProject
+		Отличие ссылочных и значимых типов.xlsx = Отличие ссылочных и значимых типов.xlsx
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
